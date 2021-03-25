@@ -7,7 +7,7 @@ class App extends Component {
       image: "",
       isLoading: true,
       breeds: [],
-      selectedBreed: ""
+      selectedBreed:""
 
     };
   }
@@ -27,11 +27,35 @@ class App extends Component {
   }
 
   _handleClick = () => {
-    this.setState({
+    console.log('button clicked!')
+    console.log(this.state)
+       this.setState({
       isLoading: true,
     });
-    this.fetchDogs();
-  };
+    let breed = this.state.selectedBreed
+    console.log(breed);
+    fetch(`https://dog.ceo/api/breed/${breed}/images/random`)
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
+        this.setState({
+          image: result.message,
+          isLoading: false,
+        });
+    // this.fetchDogs();
+   
+  })
+}
+  
+  _handleUpdate = (e) => {
+    console.log('Breed changed to' + e.target.value);
+    // let breedChoice = e.target.value;
+    // let newState = {...this.state, selectedBreed: e.target.value}
+    // console.log(newState);
+    this.setState({selectedBreed: e.target.value});
+   console.log(this.state); // <- This is still showing old state, but the state is actually updated?
+  }
+
 
   fetchDogs() {
     fetch("https://dog.ceo/api/breeds/image/random")
@@ -44,6 +68,7 @@ class App extends Component {
         });
       });
   }
+
   render() {
     // if(this.state.isLoading) {
     //   return (<div>Loading new image</div>)
@@ -69,7 +94,8 @@ class App extends Component {
             <img src={image} alt="logo" />
           
           <label for="dropdown">Choose a Breed:</label>
-          <select onChange={this._handleUpdate} id="dropdown">
+          <select  onChange={this._handleUpdate} id="dropdown">
+            <option selected disabled>Choose a Breed...</option>
             {breeds.map((breed, index) =>
               <option key={index} value={breed}>{breed}</option>
             )}
